@@ -36,7 +36,7 @@ Si en algún momento ves una palabra que no entiendes, busca su definición en e
 12. Cómo se conectan los tres archivos
 13. Cómo ejecutar y depurar tu página
 14. Experimentos guiados
-15. Mejora del proyecto: una sola fuente de verdad
+15. Mejora del proyecto: funciones y una sola fuente de verdad
 16. Comprueba que lo entendiste (preguntas y retos)
 17. Errores comunes y cómo leerlos
 18. Chuleta de sintaxis
@@ -245,12 +245,14 @@ const nombre = "Ana"; // NO se puede reasignar
 - `let` se usa cuando el valor de la caja va a cambiar.
 - `const` se usa cuando la caja siempre va a contener lo mismo.
 
-En el proyecto se usa `let` para `imagen` y `boton`. En realidad, esas cajas nunca se reasignan: siempre guardan el mismo elemento. Por eso también sería correcto escribirlo así:
+En el proyecto se usa `let` para `imagen`, `boton` y `mostrandoImagen`. Las dos primeras cajas nunca se reasignan: siempre guardan el mismo elemento. Por eso también podrían escribirse así:
 
 ```js
 const imagen = document.querySelector("img");
 const boton = document.querySelector("button");
 ```
+
+La caja `mostrandoImagen` sí necesita `let`, porque su valor cambia entre `true` y `false`.
 
 > **Detalle importante:** `const` no significa que el elemento no pueda cambiar. Significa que la **caja** no puede apuntar a otro elemento. Sí puedes cambiar las propiedades del objeto que hay dentro:
 >
@@ -294,13 +296,7 @@ let ruta = "imagenes/gato_001.jpg";
 
 Las comillas no forman parte del texto: solo marcan dónde empieza y dónde termina. Puedes usar comillas dobles `"..."`, simples `'...'` o acentos graves `` `...` ``.
 
-Esto es importante en el proyecto:
-
-```js
-boton.textContent === "Mostrar Imagen"
-```
-
-La comparación es **exacta**. Debe coincidir cada letra, cada espacio y cada mayúscula:
+Las comparaciones de textos son **exactas**. Debe coincidir cada letra, cada espacio y cada mayúscula:
 
 - `"Mostrar Imagen"` es distinto de `"Mostrar imagen"`.
 - `"Mostrar Imagen"` es distinto de `"Mostrar  Imagen"` (dos espacios).
@@ -310,11 +306,11 @@ La comparación es **exacta**. Debe coincidir cada letra, cada espacio y cada ma
 
 ```js
 let ancho = 300;
-let estaVisible = false;
+let mostrandoImagen = false;
 let esMayorDeEdad = true;
 ```
 
-Los booleanos se usan para decisiones: "si esto es verdadero, haz aquello".
+Los booleanos se usan para decisiones: "si esto es verdadero, haz aquello". En el proyecto, `mostrandoImagen` es el booleano que recuerda si la imagen está visible.
 
 ### Comparar valores
 
@@ -602,10 +598,10 @@ if (edad >= 18) {
 En el proyecto, la condición es:
 
 ```js
-if (boton.textContent === "Mostrar Imagen") {
+if (!mostrandoImagen) {
 ```
 
-Traducido al español: "si el texto del botón es exactamente `Mostrar Imagen`, haz lo siguiente".
+Traducido al español: "si **no** estamos mostrando la imagen, haz lo siguiente". `mostrandoImagen` es una variable booleana que empieza en `false`. El signo `!` invierte un booleano: `!false` es `true` y `!true` es `false`.
 
 ### Solo se ejecuta un camino
 
@@ -618,16 +614,20 @@ Cuando el navegador llega a un `if`:
 ### El error clásico: `=` contra `===`
 
 ```js
-if (boton.textContent = "Mostrar Imagen") {
+if (mostrandoImagen = true) {
   // ¡Mal!
 }
 ```
 
-Eso no compara: **asigna** el texto y además la condición se considera verdadera, así que el `if` siempre se ejecuta. La forma correcta es:
+Eso no compara: **asigna** `true` a la variable y además la condición se considera verdadera, así que el `if` siempre se ejecuta. La forma correcta es:
 
 ```js
-if (boton.textContent === "Mostrar Imagen") {
+if (mostrandoImagen === true) {
   // Bien
+}
+
+if (mostrandoImagen) {
+  // Más claro y directo
 }
 ```
 
@@ -636,17 +636,19 @@ if (boton.textContent === "Mostrar Imagen") {
 | `=` | Guarda un valor en una variable o propiedad |
 | `===` | Compara valor y tipo |
 | `==` | Compara con conversiones automáticas; evítalo al empezar |
+| `!` | Invierte un booleano: `!true` es `false`, `!false` es `true` |
 
-### Usar el texto del botón como memoria
+### Usar una variable para recordar el estado
 
-Fíjate en algo curioso: el código no guarda en una variable si la imagen está visible o no. Usa el **texto del botón** como memoria:
+Ahora el código sí guarda en una variable si la imagen está visible:
 
-- Si el botón dice `"Mostrar Imagen"`, el código asume que la imagen está oculta.
-- Si dice otra cosa, asume que está visible.
+- `mostrandoImagen` empieza en `false`, porque el HTML no muestra ninguna imagen.
+- Cada rama del `if` / `else` actualiza la variable al nuevo estado.
+- El texto del botón es solo una consecuencia: se cambia para que el usuario sepa qué pasará, pero la lógica **no lo lee**.
 
-Funciona, pero es frágil. Si alguien cambia el texto del botón por otro, o lo traduce a otro idioma, la lógica se rompe. Más adelante veremos una versión mejor con una variable de estado.
+La versión anterior de este proyecto usaba el texto del botón como memoria. Funcionaba, pero era frágil: si alguien cambiaba el texto o lo traducía, la lógica se rompía. Con la variable de estado, el texto visible puede cambiar sin afectar las decisiones del programa.
 
-> **Idea clave:** el **estado** es la información que el programa necesita recordar entre una acción y otra. Aquí el estado está escondido en el texto del botón.
+> **Idea clave:** el **estado** es la información que el programa necesita recordar entre una acción y otra. Ahora vive en `mostrandoImagen`, no en el texto del botón.
 
 ---
 
@@ -655,6 +657,8 @@ Funciona, pero es frágil. Si alguien cambia el texto del botón por otro, o lo 
 Este es el contenido de `aprendo.js`:
 
 ```js
+let mostrandoImagen = false;
+
 let imagen = document.querySelector("img");
 
 let boton = document.querySelector("button");
@@ -662,14 +666,16 @@ let boton = document.querySelector("button");
 
 boton.addEventListener("click", function () {
     
-        if (boton.textContent === "Mostrar Imagen") {
+        if (!mostrandoImagen) {
             boton.textContent = "Ocultar Imagen";
             imagen.src = "imagenes/gato_001.jpg";
             imagen.alt = "Gato";
+            mostrandoImagen = true;
         } else {
             boton.textContent = "Mostrar Imagen";
             imagen.src = "";
             imagen.alt = "";
+            mostrandoImagen = false;
         }
     }
 );
@@ -690,7 +696,19 @@ imagen.addEventListener("mouseleave", () => {
 
 Ahora vamos a recorrerlo con calma. Puedes abrir el archivo en tu editor y seguir las líneas.
 
-### Línea 1: conseguir la imagen
+### Línea 1: el estado inicial
+
+```js
+let mostrandoImagen = false;
+```
+
+- `let` crea una variable que puede cambiar.
+- `mostrandoImagen` es el nombre que le damos.
+- `false` significa que la imagen todavía no se está mostrando.
+
+Esta variable es la **fuente de verdad**: la usaremos para decidir qué hacer en cada clic. El HTML tampoco muestra ninguna imagen al principio, así que la variable y la pantalla empiezan de acuerdo.
+
+### Línea 3: conseguir la imagen
 
 ```js
 let imagen = document.querySelector("img");
@@ -703,7 +721,7 @@ let imagen = document.querySelector("img");
 
 En esta línea **no se muestra ninguna imagen**. Solo se guarda el control remoto del elemento `<img>` para poder usarlo después.
 
-### Línea 3: conseguir el botón
+### Línea 5: conseguir el botón
 
 ```js
 let boton = document.querySelector("button");
@@ -713,7 +731,7 @@ Igual que antes, pero ahora buscamos el primer `<button>`.
 
 > **Cuidado con el orden:** `querySelector` devuelve el **primer** elemento que encuentra. Si algún día agregas otro botón antes que este en el HTML, la variable `boton` apuntará al nuevo, no al que esperabas. Lo mismo pasa con la imagen.
 
-### Líneas 6 a 18: programar el botón
+### Líneas 8 a 22: programar el botón
 
 ```js
 boton.addEventListener("click", function () {
@@ -730,40 +748,45 @@ La función se guarda para el futuro. Se ejecutará **cada vez** que alguien hag
 
 > **Predice:** al cargar la página, ¿se ejecuta la función del clic? No. Solo se registra. La función espera a que el usuario haga clic.
 
-#### Línea 8: la decisión
+#### Línea 10: la decisión
 
 ```js
-if (boton.textContent === "Mostrar Imagen") {
+if (!mostrandoImagen) {
 ```
 
-Aquí el programa lee el texto actual del botón y lo compara con `"Mostrar Imagen"`.
+Aquí el programa lee la variable `mostrandoImagen` y la niega con `!`.
 
-- Al principio, el HTML dice `<button>Mostrar Imagen</button>`, así que la condición es `true`.
-- Si el botón dijera `"Ocultar Imagen"`, la condición sería `false`.
+- Al principio, `mostrandoImagen` es `false`, así que `!false` es `true` y entra en el `if`.
+- Después del primer clic, `mostrandoImagen` será `true`, así que `!true` es `false` y entrará en el `else`.
 
-#### Líneas 9 a 11: el camino de "mostrar"
+El texto del botón ya no participa en esta decisión. Podrías cambiarlo, traducirlo o rediseñarlo sin romper la lógica.
+
+#### Líneas 11 a 14: el camino de "mostrar"
 
 ```js
 boton.textContent = "Ocultar Imagen";
 imagen.src = "imagenes/gato_001.jpg";
 imagen.alt = "Gato";
+mostrandoImagen = true;
 ```
 
-Si la condición es verdadera, se hacen tres cambios:
+Si la condición es verdadera, se hacen cuatro cambios:
 
 1. El texto del botón pasa a `"Ocultar Imagen"`. Ahora el botón describe la próxima acción: si lo vuelves a pulsar, ocultará la imagen.
 2. La imagen recibe la ruta `imagenes/gato_001.jpg`. El navegador carga y muestra esa foto.
 3. El texto alternativo pasa a `"Gato"`. Este texto lo leen los lectores de pantalla y aparece si la imagen no se puede cargar.
+4. `mostrandoImagen` pasa a `true`, para recordar que la imagen ya está visible.
 
 La ruta `imagenes/gato_001.jpg` es **relativa al archivo `index.html`**: significa "entra en la carpeta `imagenes` y busca el archivo `gato_001.jpg`". No es relativa a `aprendo.js`, aunque los dos estén en la misma carpeta.
 
-#### Líneas 12 a 16: el camino de "ocultar"
+#### Líneas 16 a 20: el camino de "ocultar"
 
 ```js
 } else {
     boton.textContent = "Mostrar Imagen";
     imagen.src = "";
     imagen.alt = "";
+    mostrandoImagen = false;
 }
 ```
 
@@ -772,14 +795,15 @@ Si la condición es falsa, se ejecuta el `else`:
 1. El botón vuelve a decir `"Mostrar Imagen"`.
 2. La imagen recibe una dirección vacía (`""`). Al no tener una imagen que mostrar, la foto desaparece de la vista.
 3. El texto alternativo también se vacía, porque ya no hay imagen que describir.
+4. `mostrandoImagen` vuelve a `false`, para recordar que la imagen ya no está visible.
 
 El elemento `<img>` **sigue existiendo** en la página. No se borra del HTML. Simplemente se queda sin imagen que mostrar.
 
 > **Nota:** vaciar `src` no elimina la etiqueta, solo le quita la dirección. En algunos navegadores puede quedar un pequeño hueco o un icono de imagen rota. Más adelante veremos alternativas más limpias, como `hidden` o una clase de CSS.
 
-> **Detalle fino:** el orden importa. Primero se lee el texto en la línea 8 y después se cambia en la línea 9. Si cambiaras el texto antes de leerlo, la condición se evaluaría con el texto nuevo y la lógica sería distinta.
+> **Detalle fino:** el estado debe actualizarse en la misma rama que cambia la interfaz. Si mostraras la imagen pero olvidaras poner `mostrandoImagen = true`, el siguiente clic volvería a entrar en el `if` y la lógica se desincronizaría.
 
-#### Línea 18: cerrar la llamada
+#### Línea 22: cerrar la llamada
 
 ```js
 );
@@ -787,7 +811,7 @@ El elemento `<img>` **sigue existiendo** en la página. No se borra del HTML. Si
 
 El `});` del final cierra la función y la llamada a `addEventListener`. La indentación (los espacios al principio de las líneas) está un poco desordenada, pero a JavaScript le da igual: los espacios y los saltos de línea no cambian el resultado. Sirven para que las personas podamos leer el código. Con el tiempo, aprenderás a mantener una indentación ordenada.
 
-### Líneas 20 a 25: entrar con el ratón
+### Líneas 24 a 29: entrar con el ratón
 
 ```js
 imagen.addEventListener("mouseenter", function () {
@@ -802,9 +826,9 @@ imagen.addEventListener("mouseenter", function () {
 - `"mouseenter"` es el evento que ocurre cuando el puntero entra en el área de la imagen.
 - La función cambia la imagen al perro y actualiza el texto alternativo.
 
-No hay ningún `if` aquí. El código asume que, si el ratón entra en la imagen, la imagen está visible y se está mostrando el gato. En ese caso, cambiarla al perro tiene sentido.
+No hay ningún `if` aquí. El código asume que, si el ratón entra en la imagen, la imagen está visible y se está mostrando el gato. En ese caso, cambiarla al perro tiene sentido. El hueco es que no comprueba `mostrandoImagen`: si el evento llegara a dispararse con la imagen oculta, mostraría el perro aunque el estado dijera `false`. Lo cerraremos en la sección 15.
 
-### Líneas 27 a 31: salir con el ratón
+### Líneas 31 a 35: salir con el ratón
 
 ```js
 imagen.addEventListener("mouseleave", () => {
@@ -826,14 +850,14 @@ Es tan importante saber qué hace un programa como saber qué no hace:
 - **No descarga ni crea las imágenes.** Solo cambia la dirección (`src`) para que el navegador muestre archivos que ya existen en la carpeta `imagenes`.
 - **No modifica los archivos del proyecto.** Todo ocurre en la copia viva de la página.
 - **No ejecuta las funciones de los eventos al cargar.** Solo las registra.
-- **No comprueba si la imagen oculta puede recibir el ratón.** Más adelante veremos un caso límite relacionado con esto.
-- **No usa una variable para recordar si la imagen está visible.** Usa el texto del botón como memoria.
+- **No comprueba `mostrandoImagen` en los eventos del ratón.** Más adelante veremos cómo cerrar ese caso límite.
+- **No usa el texto del botón para decidir.** El estado vive en `mostrandoImagen`; el texto solo se actualiza para que el usuario sepa qué pasará.
 - **No borra la etiqueta `<img>`.** Solo le quita el contenido de `src` y `alt`.
 
 ### Cosas sutiles que conviene notar
 
-1. **El texto debe coincidir exactamente.** Si el HTML dice `"Mostrar Imagen"` con mayúscula, todo funciona. Si dice `"Mostrar imagen"`, la condición nunca será verdadera al principio.
-2. **La imagen oculta normalmente no muestra contenido**, así que no hay una imagen visible con la que interactuar. Por eso el `mouseenter` casi nunca se dispara cuando está oculta. Pero el código no comprueba la visibilidad: si por algún motivo el evento se disparara, aparecería el perro aunque el botón dijera `"Mostrar Imagen"`.
+1. **La variable y lo que se ve deben empezar de acuerdo.** El HTML no muestra imagen y `mostrandoImagen` vale `false`, así que hay coherencia. Si cambias el HTML para que empiece con una imagen visible, debes inicializar `mostrandoImagen = true` para que el primer clic se comporte como esperas.
+2. **La imagen oculta normalmente no muestra contenido**, así que no hay una imagen visible con la que interactuar. Por eso el `mouseenter` casi nunca se dispara cuando está oculta. Pero el código no comprueba `mostrandoImagen`: si por algún motivo el evento se disparara, aparecería el perro aunque el estado siguiera en `false`.
 3. **El botón dice la acción, no el estado.** Cuando la imagen está oculta, dice `"Mostrar Imagen"`; cuando está visible, dice `"Ocultar Imagen"`. No dice "imagen oculta" ni "imagen visible". Esto es una convención común en los botones.
 4. **Hay dos formas de función.** `function () {}` y `() => {}` son dos maneras de escribir lo mismo para este proyecto. No te preocupes si al principio una te parece más rara.
 
@@ -848,34 +872,35 @@ Vamos a seguir la página desde que se abre hasta que el usuario interactúa.
 1. El navegador lee `index.html`.
 2. Encuentra el `<script src="aprendo.js" defer>`, descarga el archivo y espera a terminar de leer el HTML.
 3. Ejecuta `aprendo.js` de arriba abajo:
+   - Inicializa `mostrandoImagen` en `false`.
    - Guarda la imagen en la variable `imagen`.
    - Guarda el botón en la variable `boton`.
    - Registra la reacción al clic.
    - Registra la reacción a `mouseenter`.
    - Registra la reacción a `mouseleave`.
 4. Las funciones de los eventos **no se ejecutan todavía**.
-5. La página muestra el estado inicial del HTML: el botón dice `"Mostrar Imagen"` y la imagen no tiene `src`, así que no se ve.
+5. La página muestra el estado inicial del HTML: el botón dice `"Mostrar Imagen"` y la imagen no tiene `src`, así que no se ve. `mostrandoImagen` vale `false`, en coherencia con lo que se ve.
 
 ### La tabla de estados
 
-| Momento | El botón dice | Archivo que se muestra | Lo que ves |
-|---|---|---|---|
-| Al cargar | Mostrar Imagen | Ninguno | Nada |
-| Clic 1 | Ocultar Imagen | `gato_001.jpg` | Un gato |
-| Entra el puntero en la imagen | Ocultar Imagen | `perro_001.jpg` | Un perro |
-| Sale el puntero de la imagen | Ocultar Imagen | `gato_001.jpg` | Un gato |
-| Clic 2 | Mostrar Imagen | Ninguno | Nada |
-| Clic 3 | Ocultar Imagen | `gato_001.jpg` | Un gato |
+| Momento | `mostrandoImagen` | El botón dice | Archivo que se muestra | Lo que ves |
+|---|---|---|---|---|
+| Al cargar | `false` | Mostrar Imagen | Ninguno | Nada |
+| Clic 1 | `true` | Ocultar Imagen | `gato_001.jpg` | Un gato |
+| Entra el puntero en la imagen | `true` | Ocultar Imagen | `perro_001.jpg` | Un perro |
+| Sale el puntero de la imagen | `true` | Ocultar Imagen | `gato_001.jpg` | Un gato |
+| Clic 2 | `false` | Mostrar Imagen | Ninguno | Nada |
+| Clic 3 | `true` | Ocultar Imagen | `gato_001.jpg` | Un gato |
 
 ### Paso a paso
 
-**Clic 1.** El usuario pulsa el botón. El navegador llama a la función del clic. La condición lee `"Mostrar Imagen"`, que coincide, así que entra en el `if`. El botón pasa a decir `"Ocultar Imagen"` y la imagen muestra el gato.
+**Clic 1.** El usuario pulsa el botón. El navegador llama a la función del clic. La condición lee `mostrandoImagen`, que es `false`, así que `!false` es `true` y entra en el `if`. El botón pasa a decir `"Ocultar Imagen"`, la imagen muestra el gato y `mostrandoImagen` pasa a `true`.
 
 **El puntero entra en la imagen.** Se dispara `mouseenter`. La imagen cambia al perro. El botón no cambia: sigue diciendo `"Ocultar Imagen"`, porque esa sigue siendo la acción disponible.
 
 **El puntero sale de la imagen.** Se dispara `mouseleave`. La imagen vuelve al gato.
 
-**Clic 2.** El usuario pulsa otra vez. La función se ejecuta de nuevo desde el principio. Ahora el texto del botón es `"Ocultar Imagen"`, así que la condición es falsa y entra en el `else`. El botón vuelve a `"Mostrar Imagen"` y la imagen se vacía. La foto desaparece.
+**Clic 2.** El usuario pulsa otra vez. La función se ejecuta de nuevo desde el principio. Ahora `mostrandoImagen` es `true`, así que `!true` es `false` y entra en el `else`. El botón vuelve a `"Mostrar Imagen"`, la imagen se vacía y `mostrandoImagen` pasa a `false`. La foto desaparece.
 
 **Clic 3.** La condición vuelve a ser verdadera y aparece el gato otra vez.
 
@@ -884,7 +909,7 @@ Vamos a seguir la página desde que se abre hasta que el usuario interactúa.
 - ¿Qué texto tendrá el botón después de tres clics? → `"Ocultar Imagen"`, porque cada clic alterna entre mostrar y ocultar, y el tercero muestra la imagen.
 - ¿La imagen cambia de archivo en el disco? → No. Solo cambia la dirección que el navegador está mostrando.
 - ¿Qué pasa si el usuario nunca toca el botón? → La imagen no se ve, porque empieza con `src=""`.
-- ¿Qué pasa si el usuario pasa el ratón por donde estaría la imagen antes de mostrarla? → Normalmente nada, porque la imagen sin `src` no muestra contenido. Pero el código no comprueba la visibilidad, así que si el evento llegara a dispararse podría aparecer el perro mientras el botón dice `"Mostrar Imagen"`. Esa es una de las razones por las que mejoraremos el código.
+- ¿Qué pasa si el usuario pasa el ratón por donde estaría la imagen antes de mostrarla? → Normalmente nada, porque la imagen sin `src` no muestra contenido. Pero el código no comprueba `mostrandoImagen`, así que si el evento llegara a dispararse podría aparecer el perro mientras el estado sigue en `false`. Esa es una de las razones por las que mejoraremos el código en la sección 15.
 
 ---
 
@@ -896,10 +921,13 @@ Este proyecto funciona porque el HTML, el CSS y el JavaScript cumplen un **contr
 
 El JavaScript espera encontrar:
 
-- Un `<button>` cuyo texto inicial sea exactamente `"Mostrar Imagen"`.
+- Un `<button>` y un `<img>`; `querySelector` toma el primero de cada tipo.
 - Un `<img>` con `src` vacío al principio.
+- Que `mostrandoImagen` empiece en `false`, en coherencia con la imagen oculta del HTML.
 - Los archivos `imagenes/gato_001.jpg` e `imagenes/perro_001.jpg` en las rutas indicadas.
 - Que el script se ejecute después de que el HTML exista (por eso usamos `defer`).
+
+El texto inicial del botón ya **no** forma parte de la lógica: `mostrandoImagen` es quien decide. Aun así, conviene que el texto del HTML coincida con el estado inicial para no confundir al usuario.
 
 El HTML del proyecto cumple ese contrato:
 
@@ -1027,6 +1055,7 @@ En la consola puedes:
 
 ```js
 console.log("El script se cargó");
+console.log("Estado:", mostrandoImagen);
 console.log("Texto del botón:", boton.textContent);
 console.log("La imagen es:", imagen.src);
 ```
@@ -1036,9 +1065,9 @@ Puedes ponerlo dentro de una función para ver cuándo se ejecuta:
 ```js
 boton.addEventListener("click", function () {
   console.log("¡Hiciste clic!");
-  console.log("El botón dice:", boton.textContent);
+  console.log("Estado antes del cambio:", mostrandoImagen);
 
-  if (boton.textContent === "Mostrar Imagen") {
+  if (!mostrandoImagen) {
     // ...
   }
 });
@@ -1052,13 +1081,13 @@ Un error típico en la consola se ve así:
 
 ```text
 Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')
-    at aprendo.js:6
+    at aprendo.js:8
 ```
 
 - `Uncaught TypeError` indica el tipo de error.
 - `Cannot read properties of null` significa que algo era `null` y el código intentó usar una propiedad o método de ese `null`.
 - `reading 'addEventListener'` te dice qué se estaba intentando hacer.
-- `at aprendo.js:6` te dice el archivo y la línea aproximada.
+- `at aprendo.js:8` te dice el archivo y la línea aproximada.
 
 En este caso, la causa probable es que `boton` era `null`: el selector no encontró el botón, o el script se ejecutó antes de que el HTML existiera.
 
@@ -1074,7 +1103,7 @@ Tipos de errores que verás a menudo:
 
 ### El error detiene el script
 
-Si hay un error mientras el script se ejecuta de arriba abajo (por ejemplo, en la línea 6), las líneas siguientes no se ejecutan. Por eso, cuando "nada funciona", lo primero es mirar la consola: puede haber un solo error al principio que esté impidiendo todo lo demás.
+Si hay un error mientras el script se ejecuta de arriba abajo (por ejemplo, en la línea 8), las líneas siguientes no se ejecutan. Por eso, cuando "nada funciona", lo primero es mirar la consola: puede haber un solo error al principio que esté impidiendo todo lo demás.
 
 Si el error ocurre dentro de una función de evento, se interrumpe esa ejecución concreta. El listener sigue registrado y se volverá a ejecutar en el próximo evento (y probablemente volverá a fallar si no lo corriges).
 
@@ -1100,24 +1129,24 @@ Este experimento sí necesita el objeto del evento, así que es la excepción: e
 
 ```js
 boton.addEventListener("click", function (evento) {
-  console.log("Clic detectado. El botón dice:", boton.textContent);
+  console.log("Clic detectado. mostrandoImagen vale:", mostrandoImagen);
   console.log("Tipo de evento:", evento.type);
 
-  if (boton.textContent === "Mostrar Imagen") {
+  if (!mostrandoImagen) {
     // ...
   }
 });
 ```
 
-Abre la consola y haz clic. Verás el texto del botón **antes** de que el código lo cambie, porque el `console.log` está antes del `if`. Prueba a mover el `console.log` después del `if/else` y compara.
+Abre la consola y haz clic. Verás el valor de `mostrandoImagen` **antes** de que el código lo cambie, porque el `console.log` está antes del `if`. Prueba a mover el `console.log` después del `if/else` y compara.
 
 **Qué aprendes:** el orden de las líneas importa, y el objeto `evento` contiene información real. También aprendes que `evento` solo existe dentro de la función si lo declaras como parámetro: si escribes `evento.type` en una función que no lo recibe, la consola mostrará un error `evento is not defined`.
 
 ### Experimento 2: cambiar los textos y las fotos
 
-Cambia `"Mostrar Imagen"` por `"Ver foto"` y `"Ocultar Imagen"` por `"Esconder foto"`. Debes cambiarlo en **todas** las apariciones: en el texto inicial del botón en el HTML, en la condición del `if` y en las asignaciones. También puedes cambiar las rutas por otras imágenes que tengas.
+Cambia `"Mostrar Imagen"` por `"Ver foto"` y `"Ocultar Imagen"` por `"Esconder foto"`. Ahora solo tienes que cambiarlo en el texto inicial del HTML y en las dos asignaciones `boton.textContent`. La condición `if (!mostrandoImagen)` no menciona ningún texto, así que no hay que tocarla. También puedes cambiar las rutas por otras imágenes que tengas.
 
-**Qué aprendes:** el texto del botón es parte de la lógica. Si cambias una aparición y olvidas otra, el comportamiento se vuelve extraño. Esta es una buena razón para usar una variable de estado, como veremos en la sección 15.
+**Qué aprendes:** separar el estado de la interfaz hace el código más robusto. Puedes cambiar, traducir o rediseñar el texto del botón sin romper la lógica, siempre que actualices `mostrandoImagen` en cada rama.
 
 ### Experimento 3: cambiar el estilo con JavaScript
 
@@ -1166,45 +1195,50 @@ Cambia el HTML para que la página empiece mostrando el gato:
 <img src="imagenes/gato_001.jpg" alt="Gato" width="300">
 ```
 
-Ahora, al cargar, el botón dice `"Ocultar Imagen"` y la imagen ya se ve. El primer clic entrará en el `else` y ocultará la imagen. Prueba también a pasar el ratón por la imagen desde el principio.
+Y ajusta el estado inicial en JavaScript:
 
-**Qué aprendes:** el JavaScript no decide el estado inicial por sí solo; el estado inicial viene del HTML. El código y el HTML deben estar de acuerdo.
+```js
+let mostrandoImagen = true;
+```
+
+Ahora, al cargar, el botón dice `"Ocultar Imagen"`, la imagen ya se ve y `mostrandoImagen` vale `true`. El primer clic entrará en el `else` y ocultará la imagen. Prueba también a pasar el ratón por la imagen desde el principio.
+
+**Qué aprendes:** el JavaScript no decide el estado inicial por sí solo; hay que mantener de acuerdo el HTML y la variable. Si cambias la imagen inicial y olvidas actualizar `mostrandoImagen`, la interfaz y el estado empiezan descoordinados.
 
 ---
 
-## 15. Mejora del proyecto: una sola fuente de verdad
+## 15. Mejora del proyecto: funciones y una sola fuente de verdad
 
-El código original funciona, pero tiene una debilidad: usa el texto visible del botón como memoria. Eso mezcla dos cosas distintas:
+El código actual ya guarda el estado en `mostrandoImagen`, así que el texto del botón ya no controla la lógica. Ese era el paso más importante. Todavía podemos ordenarlo mejor:
 
-- Lo que el programa **sabe** (si la imagen está visible).
-- Lo que el usuario **ve** (el texto del botón).
+- Las dos ramas del clic repiten la idea de actualizar el estado y la interfaz.
+- Los eventos del ratón no comprueban el estado, así que podrían mostrar el perro mientras la imagen está oculta.
+- Los elementos podrían ser `const`, porque nunca se reasignan.
 
-Cuando mezclas estas dos cosas, cualquier cambio en el diseño o en el idioma puede romper la lógica. La solución profesional es guardar el estado en una variable y dejar que el texto del botón sea solo una consecuencia.
-
-Esta es una versión mejorada:
+Esta versión usa funciones con nombre y protege los eventos del ratón:
 
 ```js
 const imagen = document.querySelector("img");
 const boton = document.querySelector("button");
 
-let visible = false;
+let mostrandoImagen = false;
 
 function mostrarImagen() {
-  visible = true;
+  mostrandoImagen = true;
   boton.textContent = "Ocultar Imagen";
   imagen.src = "imagenes/gato_001.jpg";
   imagen.alt = "Gato";
 }
 
 function ocultarImagen() {
-  visible = false;
+  mostrandoImagen = false;
   boton.textContent = "Mostrar Imagen";
   imagen.src = "";
   imagen.alt = "";
 }
 
 boton.addEventListener("click", () => {
-  if (visible) {
+  if (mostrandoImagen) {
     ocultarImagen();
   } else {
     mostrarImagen();
@@ -1212,14 +1246,14 @@ boton.addEventListener("click", () => {
 });
 
 imagen.addEventListener("mouseenter", () => {
-  if (visible) {
+  if (mostrandoImagen) {
     imagen.src = "imagenes/perro_001.jpg";
     imagen.alt = "Perro";
   }
 });
 
 imagen.addEventListener("mouseleave", () => {
-  if (visible) {
+  if (mostrandoImagen) {
     imagen.src = "imagenes/gato_001.jpg";
     imagen.alt = "Gato";
   }
@@ -1228,22 +1262,22 @@ imagen.addEventListener("mouseleave", () => {
 
 ### Qué cambió y por qué
 
-1. **`visible` es la fuente de verdad.** Es un booleano que dice si la imagen está visible. El texto del botón ya no se usa para decidir.
+1. **`mostrandoImagen` sigue siendo la fuente de verdad.** Es el booleano que dice si la imagen está visible. El texto del botón no se usa para decidir.
 2. **`mostrarImagen()` y `ocultarImagen()` tienen nombres.** Cada función hace una cosa y se entiende su intención. Además, pueden reutilizarse.
-3. **El clic consulta `visible`.** Si es `true`, oculta; si es `false`, muestra. Ya no depende de que el texto sea exacto.
-4. **Los eventos del ratón comprueban `visible`.** Si la imagen está oculta, no cambian nada. Así se evita el caso límite en el que un evento pudiera mostrar el perro mientras el botón dice `"Mostrar Imagen"`.
+3. **El clic consulta `mostrandoImagen`.** Si es `true`, oculta; si es `false`, muestra. La lógica no depende de ningún texto.
+4. **Los eventos del ratón comprueban `mostrandoImagen`.** Si la imagen está oculta, no cambian nada. Así se evita el caso límite en el que un evento pudiera mostrar el perro mientras la imagen no está visible.
 5. **Los elementos son `const`.** La caja no cambia de elemento; solo cambian sus propiedades.
 
 ### Cómo se lee ahora el flujo
 
-- Al cargar: `visible` es `false`, el botón dice `"Mostrar Imagen"` (esto lo pone el HTML) y la imagen está vacía.
-- Clic: como `visible` es `false`, se llama a `mostrarImagen()`. `visible` pasa a `true`, el botón dice `"Ocultar Imagen"` y aparece el gato.
-- Entrar con el ratón: como `visible` es `true`, se muestra el perro.
-- Salir con el ratón: como `visible` es `true`, vuelve el gato.
-- Clic: como `visible` es `true`, se llama a `ocultarImagen()`. `visible` pasa a `false`, el botón dice `"Mostrar Imagen"` y la imagen se vacía.
-- Entrar con el ratón estando oculta: la condición `if (visible)` es falsa, así que no se cambia nada.
+- Al cargar: `mostrandoImagen` es `false`, el botón dice `"Mostrar Imagen"` (esto lo pone el HTML) y la imagen está vacía.
+- Clic: como `mostrandoImagen` es `false`, se llama a `mostrarImagen()`. Pasa a `true`, el botón dice `"Ocultar Imagen"` y aparece el gato.
+- Entrar con el ratón: como `mostrandoImagen` es `true`, se muestra el perro.
+- Salir con el ratón: como `mostrandoImagen` es `true`, vuelve el gato.
+- Clic: como `mostrandoImagen` es `true`, se llama a `ocultarImagen()`. Pasa a `false`, el botón dice `"Mostrar Imagen"` y la imagen se vacía.
+- Entrar con el ratón estando oculta: la condición `if (mostrandoImagen)` es falsa, así que no se cambia nada.
 
-> **Idea avanzada:** si quieres ocultar la imagen de una forma más limpia, puedes usar `imagen.hidden = true` o una clase de CSS como `.oculta { display: none; }` en lugar de vaciar `src`. Eso hace que la imagen no ocupe espacio y no pueda recibir eventos. Es un buen siguiente paso, pero primero domina el estado con una variable.
+> **Idea avanzada:** si quieres ocultar la imagen de una forma más limpia, puedes usar `imagen.hidden = true` o una clase de CSS como `.oculta { display: none; }` en lugar de vaciar `src`. Eso hace que la imagen no ocupe espacio y no pueda recibir eventos. Es un buen siguiente paso, pero primero asegúrate de dominar la separación entre estado e interfaz.
 
 ---
 
@@ -1271,7 +1305,7 @@ Intenta responder antes de abrir las respuestas. No pasa nada si fallas: vuelve 
 4. Porque el HTML tiene `<img src="" alt="" width="300">`: la dirección de la imagen está vacía, así que no hay nada que mostrar.
 5. `mouseenter` cambia la imagen al perro; `mouseleave` vuelve a la imagen del gato.
 6. No. Solo cambia la propiedad `src` de la copia viva de la página. El archivo del disco no se toca.
-7. La condición del primer clic será falsa, porque `"Mostrar imagen"` no es exactamente `"Mostrar Imagen"`. El código entrará en el `else`: pondrá el texto `"Mostrar Imagen"` y vaciará la imagen. El primer clic parecerá no hacer nada, pero corregirá el texto. A partir del segundo clic funcionará normalmente.
+7. El primer clic seguirá funcionando: la condición usa `mostrandoImagen`, no el texto. Al mostrar la imagen, el código escribirá `"Ocultar Imagen"`; al ocultarla, `"Mostrar Imagen"`. Lo único distinto es la etiqueta inicial que ve el usuario antes del primer clic.
 8. `querySelector("img")` devuelve el primer `<img>`, así que el código controlaría el nuevo elemento y la imagen original se quedaría sin cambios. La misma idea se aplica a los botones: `querySelector("button")` toma el primero.
 
 </details>
@@ -1295,15 +1329,17 @@ Después cambia su `textContent` dentro de las dos ramas del `if`:
 
 ```js
 boton.addEventListener("click", function () {
-  if (boton.textContent === "Mostrar Imagen") {
+  if (!mostrandoImagen) {
     boton.textContent = "Ocultar Imagen";
     imagen.src = "imagenes/gato_001.jpg";
     imagen.alt = "Gato";
+    mostrandoImagen = true;
     titulo.textContent = "¡Mira el gato!";
   } else {
     boton.textContent = "Mostrar Imagen";
     imagen.src = "";
     imagen.alt = "";
+    mostrandoImagen = false;
     titulo.textContent = "¡Hola Mundo!";
   }
 });
@@ -1374,6 +1410,8 @@ En JavaScript:
 const botonPerro = document.querySelector("#boton-perro");
 
 botonPerro.addEventListener("click", () => {
+  mostrandoImagen = true;
+  boton.textContent = "Ocultar Imagen";
   imagen.src = "imagenes/perro_001.jpg";
   imagen.alt = "Perro";
 });
@@ -1381,7 +1419,7 @@ botonPerro.addEventListener("click", () => {
 
 El selector `#boton-perro` busca por `id`. Es importante que el botón nuevo esté **después** del original para que `querySelector("button")` siga encontrando primero el botón de mostrar/ocultar.
 
-**Reflexión:** si la imagen está oculta y pulsas "Ver perro", el perro aparece, pero el botón original todavía dice `"Mostrar Imagen"`. No se rompe nada, pero el estado de la interfaz queda confuso. Este es otro ejemplo de por qué conviene tener una variable de estado que coordine todo.
+**Reflexión:** el botón del perro también tiene que actualizar `mostrandoImagen` y el texto del botón principal. Si no lo hace, la interfaz y el estado quedan descoordinados. Ahora hay dos lugares que cambian el estado; eso es justo lo que motivará usar funciones como `mostrarImagen()` en la sección 15.
 
 </details>
 
@@ -1394,7 +1432,8 @@ El selector `#boton-perro` busca por `id`. Es importante que el botón nuevo est
 | `Cannot read properties of null (reading 'addEventListener')` | `querySelector` no encontró el elemento, o el script se ejecutó antes de que el HTML existiera | Revisa el selector y usa `defer`, o coloca el script al final del `<body>` |
 | No pasa nada al hacer clic | El listener no se registró por un error anterior, el selector apunta a otro elemento o el nombre del evento está mal | Mira la consola y comprueba que no haya errores rojos |
 | La imagen no cambia de archivo | Error de escritura en la propiedad, por ejemplo `imagen.scr` en lugar de `imagen.src` | Revisa la ortografía; JavaScript no avisa de propiedades inventadas |
-| La condición nunca se cumple | El texto no coincide exactamente: cambian mayúsculas, espacios o acentos | Usa `console.log(boton.textContent)` para ver el texto real |
+| El primer clic parece no hacer nada o la imagen cambia al revés | El valor inicial de `mostrandoImagen` no coincide con lo que muestra el HTML | Revisa el valor inicial y usa `console.log(mostrandoImagen)` |
+| `mostrandoImagen is not defined` | La variable se declaró dentro de una función o el nombre está mal escrito | Declárala fuera, junto a `imagen` y `boton`, y revisa la ortografía |
 | `if (x = "algo")` siempre entra | Usaste `=` (asignación) en lugar de `===` (comparación) | Cambia a `===` |
 | La imagen no aparece | La ruta está mal, el archivo no existe o el nombre tiene otra mayúscula | Revisa la carpeta `imagenes` y escribe la ruta exacta |
 | `Failed to load resource: 404` | El navegador no encuentra un archivo | Comprueba la ruta en el HTML o en `src` |
@@ -1419,11 +1458,12 @@ Esta tabla resume lo que aparece en el proyecto y lo que puedes usar para practi
 
 | Quiero... | Se escribe... | Ejemplo |
 |---|---|---|
-| Crear una variable que puede cambiar | `let nombre = valor;` | `let visible = false;` |
+| Crear una variable que puede cambiar | `let nombre = valor;` | `let mostrandoImagen = false;` |
 | Crear una variable que no se reasigna | `const nombre = valor;` | `const boton = document.querySelector("button");` |
 | Guardar un valor | `=` | `boton.textContent = "Hola";` |
 | Comparar valor y tipo | `===` | `if (texto === "Gato")` |
 | Comprobar que es distinto | `!==` | `if (texto !== "Gato")` |
+| Negar un booleano | `!` | `if (!mostrandoImagen)` |
 | Tomar una decisión | `if (condición) { ... } else { ... }` | Ver el proyecto |
 | Escribir una función tradicional | `function nombre() { ... }` | `function mostrar() { ... }` |
 | Escribir una función flecha | `() => { ... }` | `() => { ... }` |
@@ -1465,6 +1505,8 @@ Esta tabla resume lo que aparece en el proyecto y lo que puedes usar para practi
 **Consola:** herramienta del navegador donde puedes ver errores y mensajes, y probar código JavaScript.
 
 **DOM:** la representación en memoria de la página HTML. Es lo que JavaScript puede leer y modificar.
+
+**Estado:** la información que el programa necesita recordar entre una acción y otra. En este proyecto, `mostrandoImagen` guarda si la imagen está visible.
 
 **Evento:** algo que ocurre en la página, como un clic, el movimiento del ratón o la pulsación de una tecla.
 
