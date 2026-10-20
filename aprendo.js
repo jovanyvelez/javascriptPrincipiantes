@@ -1,3 +1,5 @@
+let mostrarImagen = false;
+
 let imagen = document.querySelector("img");
 
 let boton = document.querySelector("button");
@@ -5,14 +7,16 @@ let boton = document.querySelector("button");
 
 boton.addEventListener("click", function () {
     
-        if (boton.textContent === "Mostrar Imagen") {
+        if (!mostrarImagen) {
             boton.textContent = "Ocultar Imagen";
             imagen.src = "imagenes/gato_001.jpg";
             imagen.alt = "Gato";
+            mostrarImagen = true;
         } else {
             boton.textContent = "Mostrar Imagen";
             imagen.src = "";
             imagen.alt = "";
+            mostrarImagen = false;
         }
     }
 );
