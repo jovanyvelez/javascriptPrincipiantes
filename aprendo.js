@@ -3,7 +3,7 @@ let imagen = document.querySelector("img");
 let boton = document.querySelector("button");
 
 
-boton.addEventListener("click", function (evento) {
+boton.addEventListener("click", function () {
     
         if (boton.textContent === "Mostrar Imagen") {
             boton.textContent = "Ocultar Imagen";
@@ -17,7 +17,7 @@ boton.addEventListener("click", function (evento) {
     }
 );
 
-imagen.addEventListener("mouseenter", function (evento) {
+imagen.addEventListener("mouseenter", function () {
 
     imagen.src = "imagenes/perro_001.jpg";
     imagen.alt = "Perro";
