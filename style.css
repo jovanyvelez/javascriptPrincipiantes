@@ -1,0 +1,11 @@
+.articulo{
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.parrafo{
+    color: #333;
+    font-size: 16px;
+    line-height: 1.5;
+}
