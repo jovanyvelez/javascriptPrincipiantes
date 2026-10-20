@@ -425,12 +425,20 @@ saludar("Ana"); // Ahora sí se ejecuta y muestra "Hola, Ana"
 Una función no necesita nombre. Puedes crearla directamente donde la necesitas:
 
 ```js
-function (evento) {
+function () {
   // instrucciones
 }
 ```
 
 Esto se llama **función anónima**. En el proyecto aparece dentro de `addEventListener`.
+
+Si la función necesita recibir información, se indica dentro de los paréntesis:
+
+```js
+function (evento) {
+  // instrucciones
+}
+```
 
 ### Funciones flecha
 
@@ -464,11 +472,11 @@ Si no recibe parámetros, los paréntesis son obligatorios:
 }
 ```
 
-En este proyecto se usan las dos formas:
+En este proyecto se usan las dos formas, y **ninguna de las dos recibe parámetros**:
 
 ```js
 // Forma tradicional, con la palabra function
-boton.addEventListener("click", function (evento) {
+boton.addEventListener("click", function () {
   // ...
 });
 
@@ -480,7 +488,7 @@ imagen.addEventListener("mouseleave", () => {
 
 Para lo que hacemos aquí, las dos formas funcionan igual. Lo importante es que sepas reconocerlas. El profe mezcló ambos estilos a manera de demostracion; eso es válido, pero en un proyecto real conviene ser constante.
 
-### El parámetro `evento`
+### El parámetro `evento` (opcional)
 
 Cuando el navegador llama a tu función por un evento, le pasa un objeto con información sobre lo que ocurrió. Ese objeto suele llamarse `evento` o `event`:
 
@@ -491,7 +499,7 @@ boton.addEventListener("click", function (evento) {
 });
 ```
 
-En el código del proyecto, `evento` aparece como parámetro pero no se usa dentro de la función. Eso es totalmente válido: el navegador lo pasa igualmente. Si no lo necesitas, puedes escribir `function ()` o `() =>` y no nombrarlo.
+En el código del proyecto **no se usa**: los tres listeners se declaran sin parámetros (`function ()` y `() =>`). El navegador sigue pasándole el objeto igualmente; simplemente no hay ningún nombre dentro de la función al que referenciarlo. Si algún día lo necesitas, solo tienes que añadir el parámetro y nombrarlo.
 
 ### ¿Cuándo se ejecuta una función?
 
@@ -559,7 +567,7 @@ boton.addEventListener("click", (evento) => {
 });
 ```
 
-En el código del proyecto no se usa, pero está disponible. Es como un informe de lo que pasó.
+En el código del proyecto no se usa: los listeners se declaran sin parámetros. Pero el objeto sigue disponible si lo necesitas: es como un informe de lo que pasó.
 
 ### Un detalle sobre `mouseenter` y `mouseleave`
 
@@ -652,7 +660,7 @@ let imagen = document.querySelector("img");
 let boton = document.querySelector("button");
 
 
-boton.addEventListener("click", function (evento) {
+boton.addEventListener("click", function () {
     
         if (boton.textContent === "Mostrar Imagen") {
             boton.textContent = "Ocultar Imagen";
@@ -666,7 +674,7 @@ boton.addEventListener("click", function (evento) {
     }
 );
 
-imagen.addEventListener("mouseenter", function (evento) {
+imagen.addEventListener("mouseenter", function () {
 
     imagen.src = "imagenes/perro_001.jpg";
     imagen.alt = "Perro";
@@ -708,7 +716,7 @@ Igual que antes, pero ahora buscamos el primer `<button>`.
 ### Líneas 6 a 18: programar el botón
 
 ```js
-boton.addEventListener("click", function (evento) {
+boton.addEventListener("click", function () {
 ```
 
 Esta línea no ejecuta la función. Lo que hace es **registrar** una reacción:
@@ -716,7 +724,7 @@ Esta línea no ejecuta la función. Lo que hace es **registrar** una reacción:
 - `boton` es el elemento que va a escuchar.
 - `.addEventListener` es el método que registra la escucha.
 - `"click"` es el tipo de evento.
-- `function (evento) { ... }` es la función que se ejecutará cuando ocurra el clic.
+- `function () { ... }` es la función que se ejecutará cuando ocurra el clic. No lleva parámetros porque aquí no necesitamos el objeto del evento.
 
 La función se guarda para el futuro. Se ejecutará **cada vez** que alguien haga clic en el botón.
 
@@ -782,7 +790,7 @@ El `});` del final cierra la función y la llamada a `addEventListener`. La inde
 ### Líneas 20 a 25: entrar con el ratón
 
 ```js
-imagen.addEventListener("mouseenter", function (evento) {
+imagen.addEventListener("mouseenter", function () {
 
     imagen.src = "imagenes/perro_001.jpg";
     imagen.alt = "Perro";
@@ -808,8 +816,8 @@ imagen.addEventListener("mouseleave", () => {
 
 - `"mouseleave"` ocurre cuando el puntero sale del área de la imagen.
 - La función vuelve a poner la foto del gato.
-- Aquí se usa una función flecha `() => { ... }` en lugar de `function (evento) { ... }`. Las dos formas son equivalentes en este caso; la flecha es más corta.
-- Como no se usa el objeto del evento, no hay parámetro.
+- Aquí se usa una función flecha `() => { ... }` en lugar de `function () { ... }`. Las dos formas son equivalentes en este caso; la flecha es más corta.
+- Igual que en los otros dos listeners, la función no recibe parámetros: aquí no se necesita el objeto del evento.
 
 ### Lo que el código NO hace
 
@@ -827,7 +835,7 @@ Es tan importante saber qué hace un programa como saber qué no hace:
 1. **El texto debe coincidir exactamente.** Si el HTML dice `"Mostrar Imagen"` con mayúscula, todo funciona. Si dice `"Mostrar imagen"`, la condición nunca será verdadera al principio.
 2. **La imagen oculta normalmente no muestra contenido**, así que no hay una imagen visible con la que interactuar. Por eso el `mouseenter` casi nunca se dispara cuando está oculta. Pero el código no comprueba la visibilidad: si por algún motivo el evento se disparara, aparecería el perro aunque el botón dijera `"Mostrar Imagen"`.
 3. **El botón dice la acción, no el estado.** Cuando la imagen está oculta, dice `"Mostrar Imagen"`; cuando está visible, dice `"Ocultar Imagen"`. No dice "imagen oculta" ni "imagen visible". Esto es una convención común en los botones.
-4. **Hay dos formas de función.** `function (evento) {}` y `() => {}` son dos maneras de escribir lo mismo para este proyecto. No te preocupes si al principio una te parece más rara.
+4. **Hay dos formas de función.** `function () {}` y `() => {}` son dos maneras de escribir lo mismo para este proyecto. No te preocupes si al principio una te parece más rara.
 
 ---
 
@@ -1026,7 +1034,7 @@ console.log("La imagen es:", imagen.src);
 Puedes ponerlo dentro de una función para ver cuándo se ejecuta:
 
 ```js
-boton.addEventListener("click", function (evento) {
+boton.addEventListener("click", function () {
   console.log("¡Hiciste clic!");
   console.log("El botón dice:", boton.textContent);
 
@@ -1088,7 +1096,7 @@ La mejor forma de aprender es cambiar el código y observar qué pasa. Haz estos
 
 ### Experimento 1: ver el evento en la consola
 
-Añade esta línea al principio de la función del clic:
+Este experimento sí necesita el objeto del evento, así que es la excepción: esta vez la función **recibe** el parámetro `evento`. Añádelo a la función del clic y pon estos `console.log` al principio:
 
 ```js
 boton.addEventListener("click", function (evento) {
@@ -1103,7 +1111,7 @@ boton.addEventListener("click", function (evento) {
 
 Abre la consola y haz clic. Verás el texto del botón **antes** de que el código lo cambie, porque el `console.log` está antes del `if`. Prueba a mover el `console.log` después del `if/else` y compara.
 
-**Qué aprendes:** el orden de las líneas importa, y el objeto `evento` contiene información real.
+**Qué aprendes:** el orden de las líneas importa, y el objeto `evento` contiene información real. También aprendes que `evento` solo existe dentro de la función si lo declaras como parámetro: si escribes `evento.type` en una función que no lo recibe, la consola mostrará un error `evento is not defined`.
 
 ### Experimento 2: cambiar los textos y las fotos
 
@@ -1116,7 +1124,7 @@ Cambia `"Mostrar Imagen"` por `"Ver foto"` y `"Ocultar Imagen"` por `"Esconder f
 Añade un borde naranja cuando el puntero entre en la imagen y quítalo cuando salga:
 
 ```js
-imagen.addEventListener("mouseenter", function (evento) {
+imagen.addEventListener("mouseenter", function () {
   imagen.src = "imagenes/perro_001.jpg";
   imagen.alt = "Perro";
   imagen.style.border = "4px solid orange";
@@ -1286,7 +1294,7 @@ const titulo = document.querySelector("h1");
 Después cambia su `textContent` dentro de las dos ramas del `if`:
 
 ```js
-boton.addEventListener("click", function (evento) {
+boton.addEventListener("click", function () {
   if (boton.textContent === "Mostrar Imagen") {
     boton.textContent = "Ocultar Imagen";
     imagen.src = "imagenes/gato_001.jpg";
@@ -1393,7 +1401,7 @@ El selector `#boton-perro` busca por `id`. Es importante que el botón nuevo est
 | El script entero deja de funcionar | Un error detiene la ejecución de las líneas siguientes | Corrige el primer error de la consola |
 | El CSS de `.parrafo` no se aplica | El `<p>` no tiene `class="parrafo"` | Añade la clase en el HTML |
 | Ves el código antiguo después de cambiarlo | No guardaste el archivo o no recargaste la página | Guarda y recarga con `F5` o `Ctrl + R` |
-| `evento is not defined` | Usaste una variable que no existe o escribiste mal su nombre | Revisa mayúsculas, guiones y nombres |
+| `evento is not defined` | Usaste `evento` dentro de una función que no lo recibe como parámetro, o el nombre está mal escrito | Decláralo en la firma: `function (evento) { ... }`, y revisa mayúsculas y guiones |
 
 ### Cómo evitar la mayoría de estos errores
 
@@ -1467,6 +1475,8 @@ Esta tabla resume lo que aparece en el proyecto y lo que puedes usar para practi
 **null:** un valor que significa "no hay nada". `querySelector` devuelve `null` cuando no encuentra un elemento.
 
 **Objeto:** una estructura que agrupa propiedades y métodos. Un elemento HTML y un evento son objetos.
+
+**Objeto del evento:** la información que el navegador entrega a tu función cuando ocurre un evento. Llega como un parámetro llamado `evento`; en este proyecto no se usa, porque las funciones se declaran sin parámetros.
 
 **Parámetro:** el nombre que aparece en la definición de una función para recibir un valor. En `function saludar(nombre)`, el parámetro es `nombre`.
 
