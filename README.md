@@ -478,7 +478,7 @@ imagen.addEventListener("mouseleave", () => {
 });
 ```
 
-Para lo que hacemos aquí, las dos formas funcionan igual. Lo importante es que sepas reconocerlas. El autor mezcló ambos estilos; es válido, pero en un proyecto real conviene ser constante.
+Para lo que hacemos aquí, las dos formas funcionan igual. Lo importante es que sepas reconocerlas. El profe mezcló ambos estilos a manera de demostracion; eso es válido, pero en un proyecto real conviene ser constante.
 
 ### El parámetro `evento`
 
